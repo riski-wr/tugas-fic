@@ -22,6 +22,32 @@ class HtMapMarkerController extends State<HtMapMarkerView>
 
   List<Marker> markerList = [];
   loadMarkers() async {
+
+    var response = await Dio().get(
+      "${AppConfig.baseUrl}/user-positions",
+    );
+
+    var obj = response.data;
+    List list = obj["data"];
+
+    for (var i = 0; i < list.length; i++) {
+      var item = list[i];
+      markerList.add(
+        Marker(
+          point: LatLng(
+            item["latitude"],
+            item["longitude"],
+          ),
+          builder: (context) => const Icon(
+            Icons.person,
+            color: Colors.green,
+            size: 32,
+          ),
+        ),
+      );
+    }
+    setState(() {});
+
     /*
     TODO: --
     1. Buat sebuah get request menggunakan DIO

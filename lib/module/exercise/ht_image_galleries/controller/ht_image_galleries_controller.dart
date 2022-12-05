@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:example/config.dart';
 import 'package:example/core.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +12,11 @@ class HtImageGalleriesController extends State<HtImageGalleriesView>
   @override
   void initState() {
     instance = this;
+    loadImageGalleries();
     //4. Panggil function loadImageGalleries();
     //5. Back ke halaman sebelum-nya, klik tombol + di atas
     //6. Jika gambar muncul di dalam List, lanjut ke point nomor 7
-    loadImageGalleries();
+    // loadImageGalleries();
     super.initState();
   }
 
@@ -27,6 +30,15 @@ class HtImageGalleriesController extends State<HtImageGalleriesView>
   loadImageGalleries() async {
     imageGalleries = [];
     setState(() {});
+
+    var response = await Dio().get(
+      "${AppConfig.baseUrl}/image-galleries?limit=100",
+    );
+
+    var obj = response.data;
+    imageGalleries = obj["data"];
+    setState(() {});
+
     /*
     TODO: --
     1. Buat sebuah get request menggunakan DIO
@@ -42,17 +54,17 @@ class HtImageGalleriesController extends State<HtImageGalleriesView>
     3. Panggil setState setelah-nya
     */
 
-    var response = await Dio().get(
-      "${AppConfig.baseUrl}/image-galleries?limit=100",
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-        },
-      ),
-    );
-    Map obj = response.data;
-    imageGalleries = obj["data"];
-    setState(() {});
+    // var response = await Dio().get(
+    //   "${AppConfig.baseUrl}/image-galleries?limit=100",
+    //   options: Options(
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   ),
+    // );
+    // Map obj = response.data;
+    // imageGalleries = obj["data"];
+    // setState(() {});
   }
 
   uploadImage() async {
@@ -110,6 +122,41 @@ class HtImageGalleriesController extends State<HtImageGalleriesView>
 
   doUploadAllPlatform() async {
     showLoading();
+
+    // get image
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: [
+        "png",
+        "jpg",
+      ],
+      allowMultiple: false,
+    );
+    if (result == null) return;
+    File file = File(result.files.single.path!);
+    String filePath = file.path;
+
+    // upload
+    final formData = FormData.fromMap({
+      'image': MultipartFile.fromBytes(
+        File(filePath).readAsBytesSync(),
+        filename: "upload.jpg",
+      ),
+    });
+
+    var res = await Dio().post(
+      'https://api.imgbb.com/1/upload?key=b55ef3fd02b80ab180f284e479acd7c4',
+      data: formData,
+    );
+
+    var data = res.data["data"];
+    var url = data["url"];
+
+    await addImage(url);
+    await loadImageGalleries();
+
+    hideLoading();
+
     /*
     7. Gunakan file picker yang support untuk semua platform
     !snippet: get_image_with_file_picker

@@ -14,6 +14,7 @@ class HtStatisticCardController extends State<HtStatisticCardView>
   @override
   void initState() {
     instance = this;
+    loadProductCount();
     /*
     4. Panggil function loadProductCount() di dalam initState
     5. Klik tombol refresh, jika data pada statistic berubah,
@@ -32,6 +33,15 @@ class HtStatisticCardController extends State<HtStatisticCardView>
   loadProductCount() async {
     productCount = 0;
     setState(() {});
+
+    var response = await Dio().get(
+      "${AppConfig.baseUrl}/products/action/count",
+    );
+    var obj = response.data;
+    productCount = obj["data_count"];
+    setState(() {});
+
+
     /*
     TODO: --
     1. Buat sebuah get request menggunakan DIO

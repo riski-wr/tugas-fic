@@ -23,6 +23,16 @@ class HtTodoListController extends State<HtTodoListView>
 
   List todoList = [];
   loadTodoList() async {
+
+    var response = await Dio().get(
+      "${AppConfig.baseUrl}/todos",
+    );
+
+    var obj = response.data;
+    todoList = obj["data"];
+    print(obj);
+    setState(() {});
+
     /*
     TODO: --
     1. Buat sebuah get request menggunakan DIO
@@ -44,6 +54,22 @@ class HtTodoListController extends State<HtTodoListView>
   addTodo() async {
     showLoading();
     var faker = Faker.instance;
+
+    var data = {
+      "todo": faker.lorem.sentence(),
+      "done": false,
+    };
+    print(data);
+    var response = await Dio().post(
+      "${AppConfig.baseUrl}/todos",
+      data: data,
+    );
+
+    print(response.statusCode);
+
+    await loadTodoList();
+    hideLoading();
+
     /*
     TODO: --
     4. Buat sebuah get request menggunakan DIO
@@ -70,6 +96,17 @@ class HtTodoListController extends State<HtTodoListView>
   deleteTodo(item) async {
     showLoading();
     print("Delete?");
+    var id = item["id"];
+    var response = await Dio().delete(
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+        },
+      ),
+      "${AppConfig.baseUrl}/todos/$id",
+    );
+    await loadTodoList();
+    hideLoading();
 
     /*
     TODO: --
@@ -93,6 +130,17 @@ class HtTodoListController extends State<HtTodoListView>
 
   updateTodo(item) async {
     showLoading();
+    var data = item;
+    var id = item["id"];
+    item["done"] = !item["done"];
+
+    var response = Dio().post(
+      "${AppConfig.baseUrl}/todos/$id",
+      data: item,
+    );
+
+    await loadTodoList();
+    hideLoading();
     /*
     TODO: --
     9. Buat sebuah post request menggunakan DIO

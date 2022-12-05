@@ -22,6 +22,13 @@ class HtProductCrudListController extends State<HtProductCrudListView>
 
   List productList = [];
   loadProducts() async {
+
+    var response = await Dio().get(
+      "${AppConfig.baseUrl}/products",
+    );
+
+    var obj = response.data;
+    productList = obj["data"];
     /*
     TODO: --
     10. buat http request
@@ -42,16 +49,16 @@ class HtProductCrudListController extends State<HtProductCrudListView>
     14. Buka HtProductCrudFormView , lanjut point 15
     */
 
-    var response = await Dio().get(
-      "${AppConfig.baseUrl}/products",
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-        },
-      ),
-    );
-    Map obj = response.data;
-    productList = obj["data"];
+    // var response = await Dio().get(
+    //   "${AppConfig.baseUrl}/products",
+    //   options: Options(
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   ),
+    // );
+    // Map obj = response.data;
+    // productList = obj["data"];
     setState(() {});
   }
 
@@ -74,6 +81,16 @@ class HtProductCrudListController extends State<HtProductCrudListView>
 
   delete(Map item) async {
     showLoading();
+
+    var id = item["id"];
+    var response = await Dio().delete(
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+        },
+      ),
+      "${AppConfig.baseUrl}/products/$id",
+    );
 
     //TODO: --
     /*

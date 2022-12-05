@@ -10,6 +10,9 @@ class HtDashboardController extends State<HtDashboardView>
   late HtDashboardView view;
 
   loadData() async {
+    await loadProducts();
+    await loadProductCategories();
+    setState(() {});
     /*
     7. Panggil function "await loadProducts()" di dalam function loadData
     8. Panggil function "await loadProductCategories" di function loadData
@@ -20,6 +23,8 @@ class HtDashboardController extends State<HtDashboardView>
     - Daftar Product
     - Daftar Product Categories
     */
+
+
   }
 
   @override
@@ -87,6 +92,15 @@ class HtDashboardController extends State<HtDashboardView>
   loadProducts() async {
     productList = [];
     setState(() {});
+
+    var response = await Dio().get(
+        "${AppConfig.baseUrl}/products",
+    );
+
+    var obj = response.data;
+    productList = obj["data"];
+    setState(() {});
+
     /*
     TODO: --
     1. Buat sebuah get request menggunakan DIO
@@ -106,6 +120,15 @@ class HtDashboardController extends State<HtDashboardView>
   loadProductCategories() async {
     productCategoryList = [];
     setState(() {});
+
+    var response = await Dio().get(
+      "${AppConfig.baseUrl}/product-categories",
+    );
+
+    var obj = response.data;
+    productCategoryList = obj["data"];
+    setState(() {});
+
     /*
     TODO: --
     4. Buat sebuah get request menggunakan DIO

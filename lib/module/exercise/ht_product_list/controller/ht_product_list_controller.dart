@@ -64,6 +64,20 @@ class HtProductListController extends State<HtProductListView>
     productList = [];
     setState(() {});
 
+    var response = await Dio().get(
+        "${AppConfig.baseUrl}/products",
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+          },
+        ),
+    );
+
+    var obj = response.data;
+    productList = obj["data"];
+    setState(() {});
+
+
     /*
     TODO: --
     1. Buat sebuah get request menggunakan DIO
@@ -87,19 +101,19 @@ class HtProductListController extends State<HtProductListView>
     Tasks ini selesai
     */
 
-    var url = "${AppConfig.baseUrl}/products";
-    print("url: $url");
-
-    var response = await Dio().get(
-      url,
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-        },
-      ),
-    );
-    Map obj = response.data;
-    productList = obj["data"];
-    setState(() {});
+    // var url = "${AppConfig.baseUrl}/products";
+    // print("url: $url");
+    //
+    // var response = await Dio().get(
+    //   url,
+    //   options: Options(
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   ),
+    // );
+    // Map obj = response.data;
+    // productList = obj["data"];
+    // setState(() {});
   }
 }

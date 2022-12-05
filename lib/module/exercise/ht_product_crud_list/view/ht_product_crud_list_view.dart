@@ -29,7 +29,7 @@ class HtProductCrudListView extends StatefulWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
-          await Get.to(const HtProductCrudFormView());
+          await Get.to(const HtProductCrudFormView(item: null,));
           await controller.loadProducts();
         },
       ),
@@ -111,6 +111,12 @@ class HtProductCrudListView extends StatefulWidget {
                   //
                   return InkWell(
                     onTap: () async {
+
+                      await Get.to(HtProductCrudFormView(
+                        item: item,
+                      ));
+                      controller.loadProducts();
+
                       //TODO:--
                       /*
                       25. Tambahkan kode ini
