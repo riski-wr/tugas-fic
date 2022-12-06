@@ -25,6 +25,20 @@ class LsLoginAndSaveTokenController extends State<LsLoginAndSaveTokenView>
 
   doLogin() async {
     showLoading();
+
+    var data = {
+      "email": email,
+      "password": password,
+    };
+    var response = await Dio().post(
+      "${AppConfig.baseUrl}/auth/action/login",
+      data: data,
+    );
+
+    var obj = response.data;
+    AppSession.token = obj["data"]["token"];
+    mainStorage.put("token", AppSession.token);
+
     /*
     TODO: --
     1. Buat http request
@@ -72,21 +86,21 @@ class LsLoginAndSaveTokenController extends State<LsLoginAndSaveTokenView>
     Tasks ini selesai!
     */
 
-    var response = await Dio().post(
-      "${AppConfig.baseUrl}/auth/action/login",
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-        },
-      ),
-      data: {
-        "email": email,
-        "password": password,
-      },
-    );
-    Map obj = response.data;
-    AppSession.token = obj["data"]["token"];
-    mainStorage.put("token", AppSession.token);
+    // var response = await Dio().post(
+    //   "${AppConfig.baseUrl}/auth/action/login",
+    //   options: Options(
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   ),
+    //   data: {
+    //     "email": email,
+    //     "password": password,
+    //   },
+    // );
+    // Map obj = response.data;
+    // AppSession.token = obj["data"]["token"];
+    // mainStorage.put("token", AppSession.token);
 
     hideLoading();
     print(AppSession.token);

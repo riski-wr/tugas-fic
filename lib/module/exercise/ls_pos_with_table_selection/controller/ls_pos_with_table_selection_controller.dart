@@ -1,3 +1,4 @@
+import 'package:example/service/db_service.dart';
 import 'package:faker_dart/faker_dart.dart';
 import 'package:flutter/material.dart';
 import 'package:example/state_util.dart';
@@ -28,6 +29,9 @@ class LsPosWithTableSelectionController
   Faker faker = Faker.instance;
   loadProductList() async {
     ready = true;
+    productList = mainStorage.get("products") ?? [];
+    setState(() {});
+
     /*
     TODO: --
     1. Ok, baca storage "products" dan masukkan ke dalam List
@@ -44,6 +48,8 @@ class LsPosWithTableSelectionController
   }
 
   increaseQty(item) {
+    item["qty"]++;
+    setState(() {});
     /*
     4. Tambahkan qty dari item dengan klik tombol add
     gunakan kode ini:
@@ -55,6 +61,11 @@ class LsPosWithTableSelectionController
   }
 
   decreaseQty(item) {
+    if (item["qty"] == 0) return;
+    item["qty"]--;
+    setState(() {});
+
+
     /*
     5. Kurangi qty dari item, dengan klik tombol minus
     gunakan kode ini:
@@ -68,6 +79,10 @@ class LsPosWithTableSelectionController
 
   double get total {
     var itemTotal = 0.0;
+    for (var i = 0; i < productList.length; i++) {
+      var product = productList[i];
+      itemTotal += product["qty"] * product["price"];
+    }
     /*
     6. Yuk hitung total product-nya,
     Gunakan looping seperti dibawah ini:
@@ -93,6 +108,19 @@ class LsPosWithTableSelectionController
       showInfoDialog("Kamu wajib memilih meja dulu!");
       return;
     }
+
+    Map order = {
+      "created_at": DateTime.now(),
+      "customer": "-",
+      "payment_method": "Cash",
+      "total": total,
+      "table": table,
+      "items": productList,
+    };
+    List orders = await mainStorage.get("orders") ?? [];
+    orders.add(order);
+    mainStorage.put("orders", orders);
+
     /*
     7. Yuk kita checkout pos-nya dengan konsep master-detail
     Kita akan perlu sebuah Map, yang akan berisi detail order

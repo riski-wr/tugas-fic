@@ -31,6 +31,8 @@ class LsProductCrudView extends StatefulWidget {
             "photo": "https://i.ibb.co/S32HNjD/no-image.jpg",
             "product_name": faker.commerce.productName(),
             "price": double.parse("${Random().nextInt(200)}"),
+            "qty": 0,
+            "favorite": false,
           });
         },
         child: const Icon(Icons.add),
